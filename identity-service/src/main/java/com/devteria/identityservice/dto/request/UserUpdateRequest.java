@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.devteria.identityservice.validator.DobConstraint;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserUpdateRequest {
     String password;
     String firstName;
@@ -20,6 +22,4 @@ public class UserUpdateRequest {
 
     @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dob;
-
-    List<String> roles;
 }

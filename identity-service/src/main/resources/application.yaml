@@ -5,10 +5,10 @@ server:
 
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/identity_service"
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/identity_service}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: root
-    password: root
+    password: ${DBMS_PASSWORD:123456}
+    username: ${DBMS_USERNAME:root}
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,11 +16,15 @@ spring:
 
 outbound:
   identity:
-    client-id: "<clientId>"
-    client-secret: "<clientSecret>"
+    client-id: "304589200642-gbg7qnk2b7mblq7vllcmjt1ekbdi8ebr.apps.googleusercontent.com"
+    client-secret: "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"
     redirect-uri: "http://localhost:3000/authenticate"
 
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+
+logging:
+  level:
+    org.springframework.security: DEBUG
