@@ -28,3 +28,15 @@ jwt:
 logging:
   level:
     org.springframework.security: DEBUG
+
+payment:
+  vnPay:
+    tmnCode: GAK39J71
+    secretKey: O0WRURO6HPJFDCI2F5K95Y78QBRCPI6H
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    returnUrl: http://localhost:8080/identity/api/v1/payment/vn-pay-callback
+    version: 2.1.0
+    command: pay
+    orderType: other
+
+
