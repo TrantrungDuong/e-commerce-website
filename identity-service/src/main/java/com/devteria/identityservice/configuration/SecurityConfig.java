@@ -26,7 +26,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
         "/users", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"
-            , "/auth/outbound/authentication"
+            , "/auth/outbound/authentication", "/api/v1/payment/vn-pay-callback", "/payment/vn-pay-ipn"
     };
 
     @Autowired
@@ -34,9 +34,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(
-                HttpMethod.POST, PUBLIC_ENDPOINTS)
-                .permitAll()
+        httpSecurity.authorizeHttpRequests(request ->
+                request
+                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                 .anyRequest()
                 .authenticated());
 

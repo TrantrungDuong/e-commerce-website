@@ -1,6 +1,7 @@
 package com.devteria.identityservice.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.bouncycastle.jcajce.provider.digest.SHA512;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,15 +47,6 @@ public class VNPayUtil {
         return ipAdress;
     }
 
-    public static String getRandomNumber(int len) {
-        Random rnd = new Random();
-        String chars = "0123456789";
-        StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; i++) {
-            sb.append(chars.charAt(rnd.nextInt(chars.length())));
-        }
-        return sb.toString();
-    }
     public static String getPaymentURL(Map<String, String> paramsMap, boolean encodeKey) {
         return paramsMap.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
@@ -65,4 +57,30 @@ public class VNPayUtil {
                                 URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
     }
+
+
+    //validate VNPayIPN
+//    public static boolean validateVNPayIPN(Map<String, String> fields, String secretKey, String receivedHash) {
+//        Map<String, String> sorted = fields.entrySet().stream()
+//                .filter(e -> !e.getKey().equals("vnp_SecureHash") && !e.getKey().equals("vnp_SecureHashType"))
+//                .sorted(Map.Entry.comparingByKey())
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        Map.Entry::getValue,
+//                        (oldValue, newValue) -> oldValue,
+//                        LinkedHashMap::new
+//                ));
+//
+//        StringBuilder sb = new StringBuilder();
+//        for (Map.Entry<String, String> entry : sorted.entrySet()) {
+//            sb.append(entry.getKey()).append("=").append(entry.getValue());
+//            sb.append("&");
+//        }
+//
+//        // Remove last "&"
+//        sb.deleteCharAt(sb.length() - 1);
+//
+//        String generatedHash = hmacSHA512(secretKey, sb.toString());
+//        return generatedHash.equals(receivedHash);
+//    }
 }

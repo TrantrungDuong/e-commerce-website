@@ -34,7 +34,7 @@ payment:
     tmnCode: GAK39J71
     secretKey: O0WRURO6HPJFDCI2F5K95Y78QBRCPI6H
     url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-    returnUrl: http://localhost:8080/identity/api/v1/payment/vn-pay-callback
+    returnUrl: http://localhost:3000/order-success
     version: 2.1.0
     command: pay
     orderType: other
