@@ -1,3 +1,4 @@
+// src/components/Login.jsx
 import {
   Alert,
   Box,
@@ -16,6 +17,8 @@ import { OAuthConfig } from "../configurations/configuration";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, setToken } from "../services/localStorageService";
+import axios from "../services/axiosInstance";
+import {useCart} from "../context/CartContext";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,7 +29,7 @@ export default function Login() {
     const googleClientId = OAuthConfig.clientId;
 
     const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
-      callbackUrl
+        callbackUrl
     )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
 
     console.log(targetUrl);
@@ -38,7 +41,12 @@ export default function Login() {
     const accessToken = getToken();
 
     if (accessToken) {
-      navigate("/");
+      const loadCartAndRedirect = async () => {
+        await fetchCartCount();
+        navigate("/");
+      };
+
+      loadCartAndRedirect();
     }
   }, [navigate]);
 
@@ -47,6 +55,8 @@ export default function Login() {
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [snackType, setSnackType] = useState("error");
+  const { fetchCartCount } = useCart();
+
 
   const handleCloseSnackBar = (event, reason) => {
     if (reason === "clickaway") {
@@ -62,13 +72,13 @@ export default function Login() {
     setSnackBarOpen(true);
   };
 
-  const showSuccess = (message) => {
-    setSnackType("success");
-    setSnackBarMessage(message);
-    setSnackBarOpen(true);
-  };
+  // const showSuccess = (message) => {
+  //   setSnackType("success");
+  //   setSnackBarMessage(message);
+  //   setSnackBarOpen(true);
+  // };
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     const data = {
@@ -76,124 +86,117 @@ export default function Login() {
       password: password,
     };
 
-    fetch(`http://localhost:8080/identity/auth/token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
+    try {
+      const response = await axios.post("/identity/auth/token", data);
+      const responseData = response.data;
 
-        if (data.code !== 1000) throw new Error(data.message);
+      if (responseData.code !== 1000) throw new Error(responseData.message);
 
-        setToken(data.result?.token);
-        navigate("/");
-      })
-      .catch((error) => {
-        showError(error.message);
-      });
+      setToken(responseData.result?.token);
+
+      await fetchCartCount();
+
+      navigate("/");
+    } catch (error) {
+      showError(error.message);
+    }
   };
 
   return (
-    <>
-      <Snackbar
-        open={snackBarOpen}
-        onClose={handleCloseSnackBar}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleCloseSnackBar}
-          severity={snackType}
-          variant="filled"
-          sx={{ width: "100%" }}
+      <>
+        <Snackbar
+            open={snackBarOpen}
+            onClose={handleCloseSnackBar}
+            autoHideDuration={6000}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          {snackBarMessage}
-        </Alert>
-      </Snackbar>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        height="100vh"
-        bgcolor={"#f0f2f5"}
-      >
-        <Card
-          sx={{
-            minWidth: 250,
-            maxWidth: 400,
-            boxShadow: 4,
-            borderRadius: 4,
-            padding: 4,
-          }}
+          <Alert
+              onClose={handleCloseSnackBar}
+              severity={snackType}
+              variant="filled"
+              sx={{ width: "100%" }}
+          >
+            {snackBarMessage}
+          </Alert>
+        </Snackbar>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100vh"
+            bgcolor={"#f0f2f5"}
         >
-          <CardContent>
-            <Typography variant="h5" component="h1" gutterBottom>
-              Welcome to Devtetia
-            </Typography>
-            <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
-              <TextField
-                label="Username"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <TextField
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Box>
-          </CardContent>
-          <CardActions>
-            <Box display="flex" flexDirection="column" width="100%" gap="25px">
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleLogin}
-                fullWidth
-              >
-                Login
-              </Button>
-              <Button
-                type="button"
-                variant="contained"
-                color="secondary"
-                size="large"
-                onClick={handleContinueWithGoogle}
-                fullWidth
-                sx={{ gap: "10px" }}
-              >
-                <GoogleIcon />
-                Continue with Google
-              </Button>
-              <Divider></Divider>
-              <Button
-                type="submit"
-                variant="contained"
-                color="success"
-                size="large"
-              >
-                Create an account
-              </Button>
-            </Box>
-          </CardActions>
-        </Card>
-      </Box>
-    </>
+          <Card
+              sx={{
+                minWidth: 250,
+                maxWidth: 400,
+                boxShadow: 4,
+                borderRadius: 4,
+                padding: 4,
+              }}
+          >
+            <CardContent>
+              <Typography variant="h5" component="h1" gutterBottom>
+                Welcome to Ecommerce-Website
+              </Typography>
+              <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
+                <TextField
+                    label="Username"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <TextField
+                    label="Password"
+                    type="password"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+              </Box>
+            </CardContent>
+            <CardActions>
+              <Box display="flex" flexDirection="column" width="100%" gap="25px">
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleLogin}
+                    fullWidth
+                >
+                  Login
+                </Button>
+                <Button
+                    type="button"
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    onClick={handleContinueWithGoogle}
+                    fullWidth
+                    sx={{ gap: "10px" }}
+                >
+                  <GoogleIcon />
+                  Continue with Google
+                </Button>
+                <Divider></Divider>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="success"
+                    size="large"
+                >
+                  Create an account
+                </Button>
+              </Box>
+            </CardActions>
+          </Card>
+        </Box>
+      </>
   );
 }
