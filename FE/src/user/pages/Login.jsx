@@ -188,10 +188,11 @@ export default function Login() {
                 </Button>
                 <Divider></Divider>
                 <Button
-                    type="submit"
+                    type="button"
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate("/register")}
                 >
                   Create an account
                 </Button>

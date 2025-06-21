@@ -22,6 +22,7 @@ import CreateProduct from "../admin/pages/CreateProduct";
 import UpdateProduct from "../admin/pages/UpdateProduct";
 import AdminUserProfile from "../admin/pages/AdminUserProfile";
 import CreateUser from "../admin/pages/CreateUser";
+import Register from "../user/pages/Register";
 
 const AppRoutes = () => {
     return (
@@ -30,6 +31,8 @@ const AppRoutes = () => {
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/authenticate" element={<Authenticate />} />
+                <Route path="/register" element={<Register/>} />
+
 
                 <Route element={<UserRoute />}>
                     <Route path="/" element={<UserLayout />}>

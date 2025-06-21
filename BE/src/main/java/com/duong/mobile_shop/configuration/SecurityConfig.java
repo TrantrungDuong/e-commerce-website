@@ -31,6 +31,7 @@ public class SecurityConfig {
             "/api/v1/payment/vn-pay-callback",
             "/payment/vn-pay-ipn",
             "/products/media/**",
+            "/users"
     };
 
     @Autowired
