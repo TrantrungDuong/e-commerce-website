@@ -28,9 +28,6 @@ export default function Sidebar() {
                 <ListItem button onClick={() => navigate("/orders")}>
                     <ListItemText primary="Orders" />
                 </ListItem>
-                <ListItem button>
-                    <ListItemText primary="Categories" />
-                </ListItem>
                 <ListItem button onClick={() => navigate("/wishlist")}>
                     <ListItemText primary="Favorites" />
                 </ListItem>

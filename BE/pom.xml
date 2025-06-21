@@ -8,8 +8,8 @@
 		<version>3.2.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.devteria</groupId>
-	<artifactId>identity-service</artifactId>
+	<groupId>com.duong</groupId>
+	<artifactId>mobile-shop</artifactId>
 	<name>identity-service</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>Identity service</description>

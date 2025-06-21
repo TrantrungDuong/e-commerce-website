@@ -72,11 +72,6 @@ export default function Login() {
     setSnackBarOpen(true);
   };
 
-  // const showSuccess = (message) => {
-  //   setSnackType("success");
-  //   setSnackBarMessage(message);
-  //   setSnackBarOpen(true);
-  // };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -84,13 +79,16 @@ export default function Login() {
 
     try {
       const response = await axios.post("/mobile-shop/auth/token", data);
-      const token = response.data.result?.token;
 
-      if (!token) throw new Error("Login failed");
+      const accessToken = response.data.result?.token;
 
-      setToken(token);
+      if (!accessToken) {
+        throw new Error("Login failed: No access token received.");
+      }
 
-      const decoded = jwtDecode(token);
+      setToken(accessToken);
+
+      const decoded = jwtDecode(accessToken);
       const role = decoded.scope;
       localStorage.setItem("role", role);
 
@@ -102,7 +100,7 @@ export default function Login() {
         navigate("/");
       }
     } catch (error) {
-      showError(error.message);
+      showError(error.response?.data?.message || error.message || "Login failed.");
     }
   };
 

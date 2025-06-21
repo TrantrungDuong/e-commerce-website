@@ -1,22 +1,22 @@
+
 import axios from "axios";
+import { getToken, setToken, clearAllAuthData } from "./localStorageService";
 
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080",
+    timeout: 10000,
 });
 
-// ✅ Log: request đi kèm accessToken
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = getToken();
     if (token) {
-        console.log("📤 Sending request with access token:", token.slice(0, 30) + "...");
         config.headers.Authorization = `Bearer ${token}`;
-    } else {
-        console.log("⚠️ No access token found for request.");
     }
     return config;
+}, (error) => {
+    return Promise.reject(error);
 });
 
-// ✅ Tự động refresh token khi gặp 401
 axiosInstance.interceptors.response.use(
     (res) => res,
     async (err) => {
@@ -24,37 +24,31 @@ axiosInstance.interceptors.response.use(
 
         if (err.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-            console.log("⛔ Access token expired. Trying to refresh...");
 
             try {
-                const refreshToken = localStorage.getItem("refreshToken");
-                if (!refreshToken) {
-                    console.warn("❌ No refresh token found. Redirecting to login.");
-                    localStorage.clear();
+                const oldAccessToken = getToken();
+
+                if (!oldAccessToken) {
+                    clearAllAuthData();
                     window.location.href = "/login";
                     return Promise.reject(err);
                 }
-
-                console.log("🔁 Sending refresh token:", refreshToken.slice(0, 30) + "...");
-                const res = await axiosInstance.post("/mobile-shop/auth/refresh", {
-                    token: refreshToken,
+                const refreshRes = await axiosInstance.post("/mobile-shop/auth/refresh", {
+                    token: oldAccessToken,
                 });
 
-                const newToken = res.data.result.token;
-                console.log("✅ Received new access token:", newToken.slice(0, 30) + "...");
+                const newAccessToken = refreshRes.data.result.token;
 
-                localStorage.setItem("accessToken", newToken);
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                setToken(newAccessToken);
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-                return axiosInstance(originalRequest); // Retry original request
-            } catch (e) {
-                console.error("❌ Refresh token failed. Logging out.");
-                localStorage.clear();
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                clearAllAuthData();
                 window.location.href = "/login";
-                return Promise.reject(e);
+                return Promise.reject(refreshError);
             }
         }
-
         return Promise.reject(err);
     }
 );
