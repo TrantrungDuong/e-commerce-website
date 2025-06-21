@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /mobile-shop
+
+spring:
+  datasource:
+    url: ${DBMS_CONNECTION}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+outbound:
+  identity:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_REDIRECT_URI}
+
+jwt:
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION}
+  refreshable-duration: ${JWT_REFRESH_DURATION}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+payment:
+  vnPay:
+    tmnCode: ${VNPAY_TMN_CODE}
+    secretKey: ${VNPAY_SECRET_KEY}
+    url: ${VNPAY_URL}
+    returnUrl: ${VNPAY_RETURN_URL}
+    version: 2.1.0
+    command: pay
+    orderType: other
+
+app:
+  file:
+    storage-dir: ${FILE_STORAGE_DIR}
+    downloadPrefix: ${FILE_DOWNLOAD_PREFIX}
