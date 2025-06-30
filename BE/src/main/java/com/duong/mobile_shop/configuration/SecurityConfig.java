@@ -30,8 +30,7 @@ public class SecurityConfig {
             "/auth/outbound/authentication",
             "/api/v1/payment/vn-pay-callback",
             "/payment/vn-pay-ipn",
-            "/products/media/**",
-            "/users"
+            "/products/media/**"
     };
 
     @Autowired
@@ -39,11 +38,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .authorizeHttpRequests(request ->
-                        request
-                                .anyRequest().authenticated()
-                );
+        httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)

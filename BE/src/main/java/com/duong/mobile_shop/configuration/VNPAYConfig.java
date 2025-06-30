@@ -1,11 +1,12 @@
 package com.duong.mobile_shop.configuration;
 
-import lombok.Getter;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import lombok.Getter;
 
 @Configuration
 public class VNPAYConfig {
@@ -49,7 +50,7 @@ public class VNPAYConfig {
         String vnpCreateDate = formatter.format(calendar.getTime());
         vnpParamsMap.put("vnp_CreateDate", vnpCreateDate);
 
-        calendar.add(Calendar.MINUTE, 15);  // Thời gian hết hạn
+        calendar.add(Calendar.MINUTE, 15); // Thời gian hết hạn
         String vnp_ExpireDate = formatter.format(calendar.getTime());
         vnpParamsMap.put("vnp_ExpireDate", vnp_ExpireDate);
 

@@ -25,15 +25,8 @@ public enum ErrorCode {
     WISHLIST_ITEM_NOT_FOUND(1015, "with list item not found", HttpStatus.NOT_FOUND),
     REVIEW_NOT_ALLOWED(1016, "review not allowed", HttpStatus.BAD_REQUEST),
     REVIEW_NOT_FOUND(1017, "review not found", HttpStatus.NOT_FOUND),
-    REVIEW_ALREADY_EXISTS(1018,"review already existed", HttpStatus.BAD_REQUEST),
-    UPLOAD_FAILED(1019,"upload file failed", HttpStatus.BAD_REQUEST),
-
-
-
-
-
-
-
+    REVIEW_ALREADY_EXISTS(1018, "review already existed", HttpStatus.BAD_REQUEST),
+    UPLOAD_FAILED(1019, "upload file failed", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

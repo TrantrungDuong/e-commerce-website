@@ -1,6 +1,15 @@
 package com.duong.mobile_shop.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.duong.mobile_shop.dto.request.ProductCreationRequest;
 import com.duong.mobile_shop.dto.request.ProductUpdateRequest;
@@ -15,20 +24,11 @@ import com.duong.mobile_shop.exception.ErrorCode;
 import com.duong.mobile_shop.mapper.FileManagementMapper;
 import com.duong.mobile_shop.mapper.ProductMapper;
 import com.duong.mobile_shop.repository.*;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +64,8 @@ public class ProductService {
                     } catch (IOException e) {
                         throw new AppException(ErrorCode.UPLOAD_FAILED);
                     }
-                }).toList();
+                })
+                .toList();
 
         product.setImageUrl(imageUrls);
         Product savedProduct = productRepository.save(product);
@@ -73,13 +74,11 @@ public class ProductService {
 
     // Update product
     public ProductResponse updateProduct(Long id, ProductUpdateRequest request, MultipartFile[] images) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        var product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-       productMapper.updateProduct(product, request);
+        productMapper.updateProduct(product, request);
 
         Optional<Brand> optionalBrand = brandRepository.findById(request.getBrandName());
-
 
         if (optionalBrand.isPresent()) {
             product.setBrand(optionalBrand.get());
@@ -95,9 +94,11 @@ public class ProductService {
                         } catch (IOException e) {
                             throw new AppException(ErrorCode.UPLOAD_FAILED);
                         }
-                    }).toList();
+                    })
+                    .toList();
 
-            product.setImageUrl(new ArrayList<>(imageUrls));        }
+            product.setImageUrl(new ArrayList<>(imageUrls));
+        }
 
         Product updatedProduct = productRepository.save(product);
         return productMapper.toProductResponse(updatedProduct);
@@ -113,40 +114,30 @@ public class ProductService {
     }
 
     public ProductResponse getProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        Product product =
+                productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return productMapper.toProductResponse(product);
     }
 
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
 
     public List<ProductResponse> getProductsByPriceAsc() {
         List<Product> products = productRepository.findAllByOrderByPriceAsc();
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
 
     public List<ProductResponse> getProductsByPriceDesc() {
         List<Product> products = productRepository.findAllByOrderByPriceDesc();
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
 
     public List<ProductResponse> getProductsByBrand(String brandName) {
         List<Product> products = productRepository.findAllByBrand_NameIgnoreCase(brandName);
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
-
-
 
     public List<TopSellingResponse> getTopSellingProducts() {
         List<Object[]> rows = orderItemRepository.findTopSellingProducts();
@@ -165,27 +156,18 @@ public class ProductService {
         List<Object[]> results = orderRepository.findMonthlyRevenue();
         return results.stream()
                 .map(row -> new MonthlyRevenueResponse(
-                        ((Number) row[0]).intValue(),
-                        ((Number) row[1]).intValue(),
-                        ((Number) row[2]).doubleValue()
-                ))
+                        ((Number) row[0]).intValue(), ((Number) row[1]).intValue(), ((Number) row[2]).doubleValue()))
                 .toList();
     }
 
     public List<ProductResponse> searchByProduct(String name) {
         var products = productRepository.findByNameContainingIgnoreCase(name);
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
-
-
-
 
     public FileResponse uploadFile(MultipartFile file) throws IOException {
         var fileInfo = fileRepository.saveImage(file);
-        var fileManagement = fileManagementMapper.
-                toFileManagement(fileInfo);
+        var fileManagement = fileManagementMapper.toFileManagement(fileInfo);
         fileManagementRepository.save(fileManagement);
 
         return FileResponse.builder()
@@ -193,7 +175,6 @@ public class ProductService {
                 .url(fileInfo.getUrl())
                 .build();
     }
-
 
     public ResponseEntity<?> getMedia(String filename) {
         try {
@@ -213,5 +194,4 @@ public class ProductService {
             return ResponseEntity.internalServerError().body("Could not read file: " + filename);
         }
     }
-
 }

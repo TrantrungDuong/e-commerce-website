@@ -2,9 +2,9 @@ package com.duong.mobile_shop.dto.request;
 
 import java.time.LocalDate;
 
-import com.duong.mobile_shop.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 
+import com.duong.mobile_shop.validator.DobConstraint;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

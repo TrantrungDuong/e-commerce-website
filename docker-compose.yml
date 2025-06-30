@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  # ───── DATABASE ─────
+  mysql:
+    image: mysql:8.0.42-debian
+    container_name: mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: identity_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mobile-shop-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ───── BACKEND ─────
+  mobile-shop:
+    image: duongzb/mobile-shop:0.9.0
+    container_name: mobile-shop
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    volumes:
+      - E:/mobile-shop/uploads:/app/uploads
+    networks:
+      - mobile-shop-network
+
+  # ───── FRONTEND ─────
+  mobile-frontend:
+    image: duongzb/mobile-frontend:0.9.0
+    container_name: mobile-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mobile-shop
+    networks:
+      - mobile-shop-network
+
+volumes:
+  mysql_data:
+
+networks:
+  mobile-shop-network:
+    driver: bridge

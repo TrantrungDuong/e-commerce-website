@@ -1,13 +1,13 @@
 package com.duong.mobile_shop.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.duong.mobile_shop.dto.request.ReviewRequest;
 import com.duong.mobile_shop.dto.response.ReviewResponse;
 import com.duong.mobile_shop.entity.Product;
 import com.duong.mobile_shop.entity.Review;
 import com.duong.mobile_shop.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {

@@ -1,5 +1,10 @@
 package com.duong.mobile_shop.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import com.duong.mobile_shop.dto.request.CartItemRequest;
 import com.duong.mobile_shop.dto.response.CartItemResponse;
@@ -15,15 +20,11 @@ import com.duong.mobile_shop.repository.CartItemRepository;
 import com.duong.mobile_shop.repository.CartRepository;
 import com.duong.mobile_shop.repository.ProductRepository;
 import com.duong.mobile_shop.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +42,7 @@ public class CartService {
     public CartResponse getCartItems() {
         User user = getCurrentUser();
         Cart cart = getOrCreateCart(user);
-        List<CartItemResponse> items = cartItemRepository.findByCartId(cart.getId())
-                .stream()
+        List<CartItemResponse> items = cartItemRepository.findByCartId(cart.getId()).stream()
                 .map(cartMapper::toCartItemResponse)
                 .toList();
 
@@ -50,20 +50,15 @@ public class CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
 
-        return CartResponse.builder()
-                .items(items)
-                .totalAmount(totalAmount)
-                .build();
+        return CartResponse.builder().items(items).totalAmount(totalAmount).build();
     }
-
-
-
 
     // add product to cart
     public void addToCart(CartItemRequest request) {
         User user = getCurrentUser();
         Cart cart = getOrCreateCart(user);
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productRepository
+                .findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         Optional<CartItem> existingItemOpt = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
@@ -82,27 +77,26 @@ public class CartService {
         }
     }
 
-
     // update product quantity in cart
     public void updateQuantity(CartItemRequest request) {
         User user = getCurrentUser();
         Cart cart = getOrCreateCart(user);
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), request.getProductId())
+        CartItem item = cartItemRepository
+                .findByCartIdAndProductId(cart.getId(), request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         item.setQuantity(request.getQuantity());
         cartItemRepository.save(item);
     }
 
-
     // delete product from cart
     public void removeFromCart(Long productId) {
         User user = getCurrentUser();
         Cart cart = getOrCreateCart(user);
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+        CartItem item = cartItemRepository
+                .findByCartIdAndProductId(cart.getId(), productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         cartItemRepository.delete(item);
     }
-
 
     // backup method to get or create cart(if cart is existed or not
     private Cart getOrCreateCart(User user) {
@@ -116,9 +110,6 @@ public class CartService {
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
-
-
 }

@@ -1,10 +1,11 @@
 package com.duong.mobile_shop.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -21,8 +22,10 @@ public class Product {
 
     String name;
     Double price;
+
     @ElementCollection
     List<String> imageUrl;
+
     String storage;
     String ram;
     String battery;
@@ -39,5 +42,4 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Wishlist> wishlists;
-
 }

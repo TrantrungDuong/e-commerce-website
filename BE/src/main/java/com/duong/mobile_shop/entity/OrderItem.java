@@ -1,10 +1,11 @@
 package com.duong.mobile_shop.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -31,7 +32,4 @@ public class OrderItem {
 
     @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Review> reviews;
-
-
-
 }

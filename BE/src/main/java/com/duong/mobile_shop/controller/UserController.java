@@ -71,15 +71,13 @@ public class UserController {
 
     @GetMapping("/total-user")
     public ApiResponse<Long> getTotalUsers() {
-        return ApiResponse.<Long>builder()
-                .result(userService.getTotalUsers())
-                .build();
+        return ApiResponse.<Long>builder().result(userService.getTotalUsers()).build();
     }
 
     @PutMapping("/{userId}/roles")
     public ResponseEntity<ApiResponse<Void>> updateUserRoles(
-            @PathVariable String userId,
-            @RequestBody Set<String> roleNames) throws ChangeSetPersister.NotFoundException {
+            @PathVariable String userId, @RequestBody Set<String> roleNames)
+            throws ChangeSetPersister.NotFoundException {
 
         userService.updateUserRoles(userId, roleNames);
 
@@ -89,6 +87,4 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-
-
 }

@@ -4,6 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.duong.mobile_shop.constant.PredefinedRole;
 import com.duong.mobile_shop.dto.request.UserCreationRequest;
 import com.duong.mobile_shop.dto.request.UserUpdateRequest;
@@ -15,12 +21,6 @@ import com.duong.mobile_shop.exception.ErrorCode;
 import com.duong.mobile_shop.mapper.UserMapper;
 import com.duong.mobile_shop.repository.RoleRepository;
 import com.duong.mobile_shop.repository.UserRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -61,8 +61,7 @@ public class UserService {
     }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
 
@@ -71,8 +70,6 @@ public class UserService {
         }
         return userMapper.toUserResponse(userRepository.save(user));
     }
-
-
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId) {
@@ -98,13 +95,11 @@ public class UserService {
 
     @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
     public void updateUserRoles(String userId, Set<String> roleNames) throws ChangeSetPersister.NotFoundException {
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var roles = roleRepository.findAllById(roleNames);
         user.setRoles(new HashSet<>(roles));
 
         userRepository.save(user);
     }
-
 }

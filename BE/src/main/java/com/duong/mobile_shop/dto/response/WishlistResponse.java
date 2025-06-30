@@ -1,9 +1,9 @@
 package com.duong.mobile_shop.dto.response;
 
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter

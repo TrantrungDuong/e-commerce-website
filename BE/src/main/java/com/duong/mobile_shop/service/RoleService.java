@@ -1,6 +1,9 @@
 package com.duong.mobile_shop.service;
+
 import java.util.HashSet;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.duong.mobile_shop.dto.request.RoleRequest;
 import com.duong.mobile_shop.dto.response.RoleResponse;
@@ -8,7 +11,7 @@ import com.duong.mobile_shop.mapper.RoleMapper;
 import com.duong.mobile_shop.repository.PermissionRepository;
 import com.duong.mobile_shop.repository.RoleRepository;
 import com.duong.mobile_shop.repository.UserRepository;
-import org.springframework.stereotype.Service;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +26,6 @@ public class RoleService {
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
     UserRepository userRepository;
-
 
     public RoleResponse create(RoleRequest request) {
         var role = roleMapper.toRole(request);
@@ -42,8 +44,4 @@ public class RoleService {
     public void delete(String role) {
         roleRepository.deleteById(role);
     }
-
-
-
-
 }

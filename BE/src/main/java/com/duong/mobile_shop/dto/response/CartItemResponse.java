@@ -1,9 +1,9 @@
 package com.duong.mobile_shop.dto.response;
 
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,5 +17,4 @@ public class CartItemResponse {
     int quantity;
     double price;
     List<String> imageUrl;
-
 }

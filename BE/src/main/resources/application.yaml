@@ -28,6 +28,7 @@ jwt:
 logging:
   level:
     org.springframework.security: DEBUG
+    com.duong.mobile_shop.configuration.CustomJwtDecoder: DEBUG
 
 payment:
   vnPay:

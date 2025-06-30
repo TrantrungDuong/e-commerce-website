@@ -1,18 +1,20 @@
 package com.duong.mobile_shop.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.duong.mobile_shop.dto.request.ApiResponse;
 import com.duong.mobile_shop.dto.request.OrderRequest;
 import com.duong.mobile_shop.dto.response.OrderResponse;
 import com.duong.mobile_shop.enums.OrderStatus;
 import com.duong.mobile_shop.service.OrderService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -39,7 +41,7 @@ public class OrderController {
                 .build();
     }
 
-//     get all user's order
+    //     get all user's order
     @GetMapping
     ApiResponse<List<OrderResponse>> getOrdersByUser() {
         return ApiResponse.<List<OrderResponse>>builder()
@@ -54,11 +56,9 @@ public class OrderController {
                 .build();
     }
 
-
     // Update order status
     @PutMapping("/{orderId}/status")
-    ApiResponse<Void> updateStatus(@PathVariable("orderId") Long orderId,
-                                   @RequestParam OrderStatus status) {
+    ApiResponse<Void> updateStatus(@PathVariable("orderId") Long orderId, @RequestParam OrderStatus status) {
         orderService.updateOrderStatus(orderId, status);
         return ApiResponse.<Void>builder().build();
     }
@@ -71,18 +71,15 @@ public class OrderController {
 
     @GetMapping("/total-order")
     public ApiResponse<Long> getTotalOrders() {
-        return ApiResponse.<Long>builder()
-                .result(orderService.getTotalOrders())
-                .build();
+        return ApiResponse.<Long>builder().result(orderService.getTotalOrders()).build();
     }
 
     @GetMapping("/total-paid-revenue")
     public ApiResponse<Double> getTotalPaidRevenue() {
         Double totalPaidRevenue = orderService.getTotalPaidRevenue();
-        return ApiResponse.<Double>builder()
-                .result(totalPaidRevenue)
-                .build();
+        return ApiResponse.<Double>builder().result(totalPaidRevenue).build();
     }
+
     @GetMapping("/all-orders")
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
         List<OrderResponse> orders = orderService.getAllOrdersByAdmin();

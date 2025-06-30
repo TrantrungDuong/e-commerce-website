@@ -1,12 +1,13 @@
 package com.duong.mobile_shop.util;
 
-import jakarta.servlet.http.HttpServletRequest;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class VNPayUtil {
     public static String hmacSHA512(final String key, final String data) {
@@ -48,36 +49,33 @@ public class VNPayUtil {
         return paramsMap.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
                 .sorted(Map.Entry.comparingByKey())
-                .map(entry ->
-                        (encodeKey ? URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)
-                                : entry.getKey()) + "=" +
-                                URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                .map(entry -> (encodeKey ? URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) : entry.getKey())
+                        + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
     }
 
-
-    //validate VNPayIPN
-//    public static boolean validateVNPayIPN(Map<String, String> fields, String secretKey, String receivedHash) {
-//        Map<String, String> sorted = fields.entrySet().stream()
-//                .filter(e -> !e.getKey().equals("vnp_SecureHash") && !e.getKey().equals("vnp_SecureHashType"))
-//                .sorted(Map.Entry.comparingByKey())
-//                .collect(Collectors.toMap(
-//                        Map.Entry::getKey,
-//                        Map.Entry::getValue,
-//                        (oldValue, newValue) -> oldValue,
-//                        LinkedHashMap::new
-//                ));
-//
-//        StringBuilder sb = new StringBuilder();
-//        for (Map.Entry<String, String> entry : sorted.entrySet()) {
-//            sb.append(entry.getKey()).append("=").append(entry.getValue());
-//            sb.append("&");
-//        }
-//
-//        // Remove last "&"
-//        sb.deleteCharAt(sb.length() - 1);
-//
-//        String generatedHash = hmacSHA512(secretKey, sb.toString());
-//        return generatedHash.equals(receivedHash);
-//    }
+    // validate VNPayIPN
+    //    public static boolean validateVNPayIPN(Map<String, String> fields, String secretKey, String receivedHash) {
+    //        Map<String, String> sorted = fields.entrySet().stream()
+    //                .filter(e -> !e.getKey().equals("vnp_SecureHash") && !e.getKey().equals("vnp_SecureHashType"))
+    //                .sorted(Map.Entry.comparingByKey())
+    //                .collect(Collectors.toMap(
+    //                        Map.Entry::getKey,
+    //                        Map.Entry::getValue,
+    //                        (oldValue, newValue) -> oldValue,
+    //                        LinkedHashMap::new
+    //                ));
+    //
+    //        StringBuilder sb = new StringBuilder();
+    //        for (Map.Entry<String, String> entry : sorted.entrySet()) {
+    //            sb.append(entry.getKey()).append("=").append(entry.getValue());
+    //            sb.append("&");
+    //        }
+    //
+    //        // Remove last "&"
+    //        sb.deleteCharAt(sb.length() - 1);
+    //
+    //        String generatedHash = hmacSHA512(secretKey, sb.toString());
+    //        return generatedHash.equals(receivedHash);
+    //    }
 }

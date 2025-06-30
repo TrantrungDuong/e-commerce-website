@@ -1,6 +1,5 @@
 package com.duong.mobile_shop.dto.request;
 
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,5 +12,4 @@ public class VNPayRequest {
 
     Long amount;
     String bankCode = "VNPAYQR";
-
 }

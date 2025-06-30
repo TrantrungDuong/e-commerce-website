@@ -1,10 +1,14 @@
 package com.duong.mobile_shop.entity;
-import com.duong.mobile_shop.enums.OrderStatus;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import com.duong.mobile_shop.enums.OrderStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "orders")
@@ -32,5 +36,4 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<OrderItem> orderItems;
-
 }

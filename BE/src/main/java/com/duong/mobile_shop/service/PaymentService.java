@@ -1,7 +1,12 @@
 package com.duong.mobile_shop.service;
 
+import java.util.*;
 
-import com.duong.mobile_shop.util.VNPayUtil;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.duong.mobile_shop.configuration.VNPAYConfig;
 import com.duong.mobile_shop.dto.response.VNPayResponse;
 import com.duong.mobile_shop.entity.Order;
@@ -11,12 +16,9 @@ import com.duong.mobile_shop.exception.AppException;
 import com.duong.mobile_shop.exception.ErrorCode;
 import com.duong.mobile_shop.repository.OrderRepository;
 import com.duong.mobile_shop.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import com.duong.mobile_shop.util.VNPayUtil;
 
-import java.util.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +26,10 @@ public class PaymentService {
     private final VNPAYConfig vnPayConfig;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+
     public VNPayResponse createVnPayPayment(Long orderId, HttpServletRequest request) {
         User currentUser = getCurrentUser();
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getId().equals(currentUser.getId())) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
@@ -61,11 +63,9 @@ public class PaymentService {
                 .build();
     }
 
-
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
     public String handleVnPayIpn(HttpServletRequest request) {
@@ -75,7 +75,8 @@ public class PaymentService {
         try {
             if ("00".equals(status)) {
                 Long orderId = Long.parseLong(txnRef);
-                Order order = orderRepository.findById(orderId)
+                Order order = orderRepository
+                        .findById(orderId)
                         .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
                 order.setStatus(OrderStatus.PAID);
@@ -89,7 +90,4 @@ public class PaymentService {
             return "error";
         }
     }
-
-
-
 }

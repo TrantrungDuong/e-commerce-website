@@ -1,13 +1,13 @@
 package com.duong.mobile_shop.mapper;
 
-import com.duong.mobile_shop.dto.request.UserCreationRequest;
-import com.duong.mobile_shop.dto.request.UserUpdateRequest;
-import com.duong.mobile_shop.dto.response.UserResponse;
-import com.duong.mobile_shop.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.duong.mobile_shop.dto.request.UserCreationRequest;
+import com.duong.mobile_shop.dto.request.UserUpdateRequest;
+import com.duong.mobile_shop.dto.response.UserResponse;
+import com.duong.mobile_shop.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

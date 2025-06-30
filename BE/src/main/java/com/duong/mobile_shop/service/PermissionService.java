@@ -1,12 +1,14 @@
 package com.duong.mobile_shop.service;
+
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.duong.mobile_shop.dto.request.PermissionRequest;
 import com.duong.mobile_shop.dto.response.PermissionResponse;
 import com.duong.mobile_shop.entity.Permission;
 import com.duong.mobile_shop.mapper.PermissionMapper;
 import com.duong.mobile_shop.repository.PermissionRepository;
-import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

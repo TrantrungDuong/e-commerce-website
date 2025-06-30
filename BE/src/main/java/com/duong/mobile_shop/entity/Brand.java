@@ -1,5 +1,7 @@
 package com.duong.mobile_shop.entity;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,5 +18,4 @@ public class Brand {
     String name;
 
     String logo;
-
 }

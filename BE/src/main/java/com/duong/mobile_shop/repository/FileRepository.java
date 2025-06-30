@@ -1,13 +1,4 @@
-
 package com.duong.mobile_shop.repository;
-import com.duong.mobile_shop.dto.response.FileInfo;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +9,16 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.duong.mobile_shop.dto.response.FileInfo;
+
 @Repository
 public class FileRepository {
 
@@ -27,11 +28,9 @@ public class FileRepository {
     @Value("${app.file.downloadPrefix}")
     String urlPrefix;
 
-
     public FileInfo saveImage(MultipartFile file) throws IOException {
         Path folder = Paths.get(storageDir);
-        String fileExtension = StringUtils
-                .getFilenameExtension(file.getOriginalFilename());
+        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
 
         String fileName = Objects.isNull(fileExtension)
                 ? UUID.randomUUID().toString()
@@ -60,6 +59,4 @@ public class FileRepository {
 
         return resource;
     }
-
-
 }

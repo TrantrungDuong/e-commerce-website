@@ -1,12 +1,12 @@
 package com.duong.mobile_shop.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.duong.mobile_shop.dto.response.WishlistResponse;
 import com.duong.mobile_shop.entity.Product;
 import com.duong.mobile_shop.entity.User;
 import com.duong.mobile_shop.entity.Wishlist;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface WishlistMapper {
@@ -22,5 +22,3 @@ public interface WishlistMapper {
     @Mapping(target = "addedAt", ignore = true)
     Wishlist toWishlist(User user, Product product);
 }
-
-

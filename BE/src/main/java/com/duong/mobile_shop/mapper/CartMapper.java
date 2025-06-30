@@ -1,9 +1,10 @@
 package com.duong.mobile_shop.mapper;
 
-import com.duong.mobile_shop.dto.response.CartItemResponse;
-import com.duong.mobile_shop.entity.CartItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.duong.mobile_shop.dto.response.CartItemResponse;
+import com.duong.mobile_shop.entity.CartItem;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {

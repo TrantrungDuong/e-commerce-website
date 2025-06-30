@@ -1,11 +1,13 @@
 package com.duong.mobile_shop.repository.httpclient;
 
-import com.duong.mobile_shop.dto.request.ExchangeTokenRequest;
-import com.duong.mobile_shop.dto.response.ExchangeTokenResponse;
-import feign.QueryMap;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.duong.mobile_shop.dto.request.ExchangeTokenRequest;
+import com.duong.mobile_shop.dto.response.ExchangeTokenResponse;
+
+import feign.QueryMap;
 
 @FeignClient(name = "outbound-identity", url = "https://oauth2.googleapis.com")
 public interface OutboundIdentityClient {

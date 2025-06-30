@@ -1,5 +1,12 @@
 package com.duong.mobile_shop.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.duong.mobile_shop.dto.request.OrderRequest;
 import com.duong.mobile_shop.dto.response.OrderItemResponse;
 import com.duong.mobile_shop.dto.response.OrderResponse;
@@ -10,16 +17,11 @@ import com.duong.mobile_shop.exception.ErrorCode;
 import com.duong.mobile_shop.mapper.OrderItemMapper;
 import com.duong.mobile_shop.mapper.OrderMapper;
 import com.duong.mobile_shop.repository.*;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +44,11 @@ public class OrderService {
     public OrderResponse buyNow(OrderRequest request) {
         String username = getCurrentUsername();
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productRepository
+                .findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         Order order = orderMapper.toOrder(user, product, request.getQuantity());
@@ -63,8 +66,8 @@ public class OrderService {
 
     public OrderResponse checkoutFromCart() {
         String username = getCurrentUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         Cart cart = user.getCart();
         if (cart == null || cart.getId() == null) {
@@ -86,42 +89,44 @@ public class OrderService {
         order.setTotalAmount(totalAmount);
         orderRepository.save(order);
 
-        List<OrderItem> orderItems = cartItems.stream().map(item -> {
-            OrderItem oi = orderItemMapper.toOrderItem(item.getProduct(), item.getQuantity());
-            oi.setOrder(order);
-            return oi;
-        }).toList();
+        List<OrderItem> orderItems = cartItems.stream()
+                .map(item -> {
+                    OrderItem oi = orderItemMapper.toOrderItem(item.getProduct(), item.getQuantity());
+                    oi.setOrder(order);
+                    return oi;
+                })
+                .toList();
 
         orderItemRepository.saveAll(orderItems);
         cartItemRepository.deleteAll(cartItems);
 
         OrderResponse response = orderMapper.toOrderResponse(order);
-        response.setItems(orderItems.stream()
-                .map(orderItemMapper::toOrderItemResponse)
-                .collect(Collectors.toList()));
+        response.setItems(
+                orderItems.stream().map(orderItemMapper::toOrderItemResponse).collect(Collectors.toList()));
         return response;
     }
 
     public List<OrderResponse> getOrdersByUser() {
         String username = getCurrentUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         List<Order> orders = orderRepository.findByUserId(user.getId());
 
-        return orders.stream().map(order -> {
-            List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
-            OrderResponse response = orderMapper.toOrderResponse(order);
-            response.setItems(items.stream()
-                    .map(orderItemMapper::toOrderItemResponse)
-                    .collect(Collectors.toList()));
-            return response;
-        }).toList();
+        return orders.stream()
+                .map(order -> {
+                    List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
+                    OrderResponse response = orderMapper.toOrderResponse(order);
+                    response.setItems(items.stream()
+                            .map(orderItemMapper::toOrderItemResponse)
+                            .collect(Collectors.toList()));
+                    return response;
+                })
+                .toList();
     }
 
     public void updateOrderStatus(Long orderId, OrderStatus status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         order.setStatus(status);
         orderRepository.save(order);
@@ -129,11 +134,10 @@ public class OrderService {
 
     public void cancelOrder(Long orderId) {
         String username = getCurrentUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
@@ -148,8 +152,7 @@ public class OrderService {
     public OrderResponse getOrder(Long orderId) {
         String username = getCurrentUsername();
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getUsername().equals(username)) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
@@ -158,9 +161,8 @@ public class OrderService {
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
 
         OrderResponse response = orderMapper.toOrderResponse(order);
-        response.setItems(items.stream()
-                .map(orderItemMapper::toOrderItemResponse)
-                .collect(Collectors.toList()));
+        response.setItems(
+                items.stream().map(orderItemMapper::toOrderItemResponse).collect(Collectors.toList()));
 
         return response;
     }
@@ -173,23 +175,20 @@ public class OrderService {
         return orderRepository.getTotalPaidRevenue();
     }
 
-
     public List<OrderResponse> getAllOrdersByAdmin() {
         List<Order> orders = orderRepository.findAll();
-        return orders.stream().map(order -> {
-            List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
-            OrderResponse response = orderMapper.toOrderResponse(order);
-            User user = order.getUser();
-            response.setUsername(user.getUsername());
-            List<OrderItemResponse> orderItemResponses = items.stream()
-                    .map(orderItemMapper::toOrderItemResponse)
-                    .collect(Collectors.toList());
-            response.setItems(orderItemResponses);
-            return response;
-        }).collect(Collectors.toList());
+        return orders.stream()
+                .map(order -> {
+                    List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
+                    OrderResponse response = orderMapper.toOrderResponse(order);
+                    User user = order.getUser();
+                    response.setUsername(user.getUsername());
+                    List<OrderItemResponse> orderItemResponses = items.stream()
+                            .map(orderItemMapper::toOrderItemResponse)
+                            .collect(Collectors.toList());
+                    response.setItems(orderItemResponses);
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
-
-
-
-
 }

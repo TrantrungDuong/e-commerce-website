@@ -11,5 +11,4 @@ import lombok.experimental.FieldDefaults;
 public class FileResponse {
     String originalFileName;
     String url;
-
 }

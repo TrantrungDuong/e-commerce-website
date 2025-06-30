@@ -1,22 +1,23 @@
 package com.duong.mobile_shop.controller;
 
-import com.duong.mobile_shop.dto.request.ApiResponse;
-import com.duong.mobile_shop.dto.request.ProductCreationRequest;
-import com.duong.mobile_shop.dto.request.ProductUpdateRequest;
-import com.duong.mobile_shop.dto.response.FileResponse;
-import com.duong.mobile_shop.dto.response.MonthlyRevenueResponse;
-import com.duong.mobile_shop.dto.response.ProductResponse;
-import com.duong.mobile_shop.dto.response.TopSellingResponse;
-import com.duong.mobile_shop.service.ProductService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import com.duong.mobile_shop.dto.request.ApiResponse;
+import com.duong.mobile_shop.dto.request.ProductCreationRequest;
+import com.duong.mobile_shop.dto.request.ProductUpdateRequest;
+import com.duong.mobile_shop.dto.response.MonthlyRevenueResponse;
+import com.duong.mobile_shop.dto.response.ProductResponse;
+import com.duong.mobile_shop.dto.response.TopSellingResponse;
+import com.duong.mobile_shop.service.ProductService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/products")
@@ -27,16 +28,13 @@ public class ProductController {
 
     ProductService productService;
 
-
     @PostMapping
     public ApiResponse<ProductResponse> createProduct(
-            @ModelAttribute ProductCreationRequest request,
-            @RequestParam("images") MultipartFile[] images) {
+            @ModelAttribute ProductCreationRequest request, @RequestParam("images") MultipartFile[] images) {
         return ApiResponse.<ProductResponse>builder()
                 .result(productService.createProduct(request, images))
                 .build();
     }
-
 
     @PutMapping(value = "/{id}")
     public ApiResponse<ProductResponse> updateProduct(
@@ -50,7 +48,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteProduct(@PathVariable Long id){
+    public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ApiResponse.<Void>builder()
                 .message("Product deleted successfully")
@@ -65,14 +63,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ProductResponse> getProduct(@PathVariable Long id){
+    public ApiResponse<ProductResponse> getProduct(@PathVariable Long id) {
         return ApiResponse.<ProductResponse>builder()
                 .result(productService.getProduct(id))
                 .build();
     }
 
     @GetMapping
-    public ApiResponse<List<ProductResponse>> getAllProducts(){
+    public ApiResponse<List<ProductResponse>> getAllProducts() {
         return ApiResponse.<List<ProductResponse>>builder()
                 .result(productService.getAllProducts())
                 .build();
@@ -99,7 +97,6 @@ public class ProductController {
                 .build();
     }
 
-
     @GetMapping("/top-selling")
     public ApiResponse<List<TopSellingResponse>> getTopSellingProducts() {
         return ApiResponse.<List<TopSellingResponse>>builder()
@@ -118,8 +115,4 @@ public class ProductController {
     public ResponseEntity<?> getMedia(@PathVariable String filename) {
         return productService.getMedia(filename);
     }
-
-
-
-
 }
